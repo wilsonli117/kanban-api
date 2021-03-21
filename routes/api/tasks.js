@@ -14,17 +14,69 @@ router.get("/", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    const { boardId, bucket, assignedId } = req.body.task;
+    const { title, description, boardId, bucket, assignedId } = req.body;
 
     const newTask = new Task({
+        title,
+        description,
         board_id: boardId,
         bucket,
-        assigned_id: assignedId
+        assigned_id: assignedId 
     })
 
     newTask.save()
         .then(task => {
-            res.json(task);
+            Board.findById(boardId)
+                .then(board => {
+                    board.tasks.push(task.id)
+                    board.save()
+                        .then(() => {
+                            if(task.assigned_id) {
+                                User.findById(assignedId)
+                                    .then(user => {
+                                        user.assignedTasks.push(task.id)
+                                        user.save()
+                                            .then(() => res.json(task))
+                                    })
+                            } else {
+                                res.json(task);
+                            }
+                        })
+                        .catch(error => console.log(error))
+                })
         })
-        .catch(res.status(422).json({ error: "Unprocessable Entity" }))
+        .catch(error => console.log(error))
 })
+
+router.delete("/", (req, res) => {
+    const taskId = req.body.taskId
+
+    Task.findByIdAndDelete(taskId)
+        .then((task) => {
+            Board.findById(task.board_id)
+                .then(board => {
+                    board.tasks.splice(board.tasks.indexOf(task.id), 1)
+                    board.save()
+                        .then(() => {
+                            if (task.assigned_id) {
+                                User.findById(task.assigned_id)
+                                    .then(user => {
+                                        user.assignedTasks.splice(user.boards.indexOf(taskId), 1)
+                                        user.save()
+                                            .then(() => {
+                                                res.status(200).json({ success: "Task successfully removed" })
+                                            })
+                                            .catch(error => console.log(error));
+                                    })
+                            } else {
+                                res.status(200).json({ success: "Task successfully removed" })
+                            }
+                        })
+                })
+
+    
+        })
+        .catch(error => console.log(error));
+})
+
+module.exports = router;

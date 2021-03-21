@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const TaskSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
     board_id: {
         type: String,
         required: true
@@ -11,7 +19,8 @@ const TaskSchema = new Schema({
         required: true
     },
     assigned_id: {
-        type: String
+        type: String,
+        default: null
     },
     lastUpdated: {
         type: Date,
@@ -20,3 +29,5 @@ const TaskSchema = new Schema({
 }, {
     timestamps: true
 })
+
+module.exports = Task = mongoose.model("Task", TaskSchema);

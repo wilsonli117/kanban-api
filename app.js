@@ -25,4 +25,4 @@ app.use(bodyParser.json());
 
 app.use("/api/users", users);
 app.use("/api/boards", boards);
-// app.use("/api/tasks", tasks);
+app.use("/api/tasks", tasks);

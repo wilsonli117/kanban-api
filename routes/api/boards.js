@@ -37,7 +37,17 @@ router.delete("/", (req, res) => {
     const boardId = req.body.boardId;
 
     Board.findByIdAndDelete(boardId)
-        .then(() => res.status(200).json({ success: "Board successfully removed" }))
+        .then(board => {
+            User.findById(board.user_id)
+                .then(user => {
+                    user.boards.splice(user.boards.indexOf(boardId), 1)
+                    user.save()
+                        .then(() => {
+                            res.status(200).json({ success: "Board successfully removed" })
+                        })
+                        .catch(error => console.log(error));
+                })
+        })
         .catch(error => console.log(error));
 })
 

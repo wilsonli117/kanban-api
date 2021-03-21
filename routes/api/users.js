@@ -74,18 +74,4 @@ router.post("/login", (req, res) => {
         })
 })
 
-router.delete("/boards", (req, res) => {
-    const { userId, boardId} = req.body;
-
-    User.findById(userId)
-        .then(user => {
-            user.boards.splice(user.boards.indexOf(boardId), 1)
-            user.save()
-                .then(user => {
-                    res.status(200).json({ success: "Board successfully removed from user's boards"})
-                })
-                .catch(error => console.log(error));
-        })
-})
-
 module.exports = router;
