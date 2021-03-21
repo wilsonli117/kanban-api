@@ -10,11 +10,8 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    assignedTasks: [
-        {
-            type: Number
-        }
-    ]
+    boards: [],
+    assignedTasks: []
 }, {
     timestamps: true
 })
