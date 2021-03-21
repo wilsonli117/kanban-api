@@ -36,7 +36,7 @@ router.post("/register", (req, res) => {
                                     }
                                 );
                             })
-                            .catch(error => console.log(error));
+                            .catch(res.status(422).json({ error: "Unprocessable Entity"}));
                     })
                 })
 
@@ -71,6 +71,20 @@ router.post("/login", (req, res) => {
                         return res.status(400).json({ password: "Incorrect password" })
                     }
                 })
+        })
+})
+
+router.delete("/boards", (req, res) => {
+    const { userId, boardId} = req.body;
+
+    User.findById(userId)
+        .then(user => {
+            user.boards.splice(user.boards.indexOf(boardId), 1)
+            user.save()
+                .then(user => {
+                    res.status(200).json({ success: "Board successfully removed from user's boards"})
+                })
+                .catch(error => console.log(error));
         })
 })
 

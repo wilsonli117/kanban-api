@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const users = require("./routes/api/users");
+const boards = require("./routes/api/boards");
+const tasks = require("./routes/api/tasks");
 
 mongoose
     .connect(db, { useNewUrlParser: true })
@@ -22,3 +24,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/api/users", users);
+app.use("/api/boards", boards);
+// app.use("/api/tasks", tasks);
