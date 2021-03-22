@@ -5,16 +5,16 @@ const User = require("../../models/User");
 
 router.get("/", (req, res) => {
     const boardId = req.body.boardId;
-
     Board.findById(boardId)
         .then(board => res.json(board))
-        .catch(error => res.status(404).json())
+        .catch(error => console.log(error))
 })
 
 router.post("/", (req, res) => {
-    const userId = req.body.userId;
+    const { name, userId } = req.body;
 
     const newBoard = new Board({
+        name,
         user_id: userId,
         buckets: ["Todo", "In Progress", "Done"],
         tasks: []
@@ -24,7 +24,8 @@ router.post("/", (req, res) => {
         .then(board => {
             User.findById(userId)
                 .then(user => {
-                    user.boards.push(board.id)
+                    const boardId = board.id
+                    user.boards.push(boardId);
                     user.save()
                         .then(res.json(board))
                 })

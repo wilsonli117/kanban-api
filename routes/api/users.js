@@ -3,7 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-const keys = require("../../config/keys")
+const Board = require("../../models/Board");
+const keys = require("../../config/keys");
 
 router.post("/register", (req, res) => {
     User.findOne({ username: req.body.username })
@@ -36,7 +37,7 @@ router.post("/register", (req, res) => {
                                     }
                                 );
                             })
-                            .catch(res.status(422).json({ error: "Unprocessable Entity"}));
+                            .catch(error => console.log(error));
                     })
                 })
 
@@ -71,6 +72,22 @@ router.post("/login", (req, res) => {
                         return res.status(400).json({ password: "Incorrect password" })
                     }
                 })
+        })
+})
+
+router.post("/boards", (req, res) => {
+    const userId = req.body.userId;
+
+    User.findById(userId)
+        .then(user => {
+            const boards = [];
+            user.boards.forEach(boardId => {
+                Board.findById(boardId)
+                    .then(board => {
+                        boards.push(board);
+                    })
+            })
+            res.json({ boards })
         })
 })
 
