@@ -80,14 +80,13 @@ router.post("/boards", (req, res) => {
 
     User.findById(userId)
         .then(user => {
-            const boards = [];
-            user.boards.forEach(boardId => {
-                Board.findById(boardId)
-                    .then(board => {
-                        boards.push(board);
-                    })
-            })
-            res.json({ boards })
+            const boardIds = user.boards;
+
+            Board.find({ _id: { $in: boardIds } })
+                .then(boards => {
+                    console.log(boards);
+                    res.json(boards)
+                })
         })
 })
 
